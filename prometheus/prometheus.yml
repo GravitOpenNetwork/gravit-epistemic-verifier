@@ -1,0 +1,8 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'gravit-epistemic-verifier'
+    static_configs:
+      - targets: ['nginx:80']   # or epistemic-verifier:8000
+    metrics_path: '/metrics'
