@@ -8,16 +8,17 @@ from transformers import AutoTokenizer
 
 
 class SemanticONNXVerifier:
-    def __init__(self, model_name: str = "sentence-transformers/all-MiniLM-L6-v2",
-                 export_dir: str = "models/onnx"):
+    def __init__(
+        self,
+        model_name: str = "sentence-transformers/all-MiniLM-L6-v2",
+        export_dir: str = "models/onnx",
+    ):
         self.export_dir = export_dir
         os.makedirs(export_dir, exist_ok=True)
 
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.model = ORTModelForFeatureExtraction.from_pretrained(
-            model_name,
-            export=True,
-            provider="CPUExecutionProvider"
+            model_name, export=True, provider="CPUExecutionProvider"
         )
 
     def score(self, intent: str, action: str) -> Dict[str, float]:

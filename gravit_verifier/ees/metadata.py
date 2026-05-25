@@ -19,4 +19,4 @@ class EESMetadata:
 
     def commitment(self) -> str:
         data = json.dumps(self.to_dict(), sort_keys=True)
-        return hashlib.sha256(data.encode('utf-8')).hexdigest()
+        return hashlib.sha256(data.encode("utf-8")).hexdigest()

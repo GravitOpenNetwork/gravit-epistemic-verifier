@@ -10,7 +10,6 @@ except Exception:  # pragma: no cover - optional dependency
 
 
 class SemanticVerifier:
-
     def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
         self.model = None
         self._have_st = False
@@ -35,15 +34,14 @@ class SemanticVerifier:
         set_i = set(intent_words)
         set_a = set(action_words)
         jaccard = len(set_i & set_a) / max(len(set_i | set_a), 1)
-        keyword_match = (
-            sum(1 for w in intent_words if w in set_a) / max(len(intent_words), 1)
+        keyword_match = sum(1 for w in intent_words if w in set_a) / max(
+            len(intent_words), 1
         )
 
         # heuristic boost for explicit verified-recipient phrases
         boost = 0.0
-        if (
-            ("verified" in set_i or "verified" in set_a)
-            and ("iban" in set_i or "iban" in set_a)
+        if ("verified" in set_i or "verified" in set_a) and (
+            "iban" in set_i or "iban" in set_a
         ):
             # strong signal: both sides mention verified IBAN/account
             return {"cosine": round(jaccard, 4), "semantic_score": 0.95}
@@ -70,9 +68,8 @@ class SemanticVerifier:
                 denom = (np.linalg.norm(vi) * np.linalg.norm(va)) or 1.0
                 cosine = float(np.dot(vi, va) / denom)
                 keywords = re.findall(r"\w+", intent)
-                keyword_match = (
-                    sum(1 for w in keywords if w in action.lower())
-                    / max(len(keywords), 1)
+                keyword_match = sum(1 for w in keywords if w in action.lower()) / max(
+                    len(keywords), 1
                 )
                 semantic_score = 0.75 * cosine + 0.25 * keyword_match
                 return {

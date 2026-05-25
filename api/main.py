@@ -15,6 +15,7 @@ app.add_middleware(
 Instrumentator().instrument(app).expose(app)
 engine = EpistemicEngine()
 
+
 @app.post("/verify", response_model=VerificationResponse)
 async def verify_action(request: VerificationRequest):
     result = engine.verify(
@@ -25,6 +26,7 @@ async def verify_action(request: VerificationRequest):
         intermediate_steps=request.intermediate_steps,
     )
     return VerificationResponse(**result, verifier_version="1.0.0")
+
 
 @app.get("/health")
 async def health():

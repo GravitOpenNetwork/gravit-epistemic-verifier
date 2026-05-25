@@ -1,5 +1,4 @@
 class AdversarialDetector:
-
     def detect(self, intent: str, action: str) -> float:
         # baseline heuristic (v1)
         risk = 0.0
