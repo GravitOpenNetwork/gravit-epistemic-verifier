@@ -22,6 +22,7 @@ except Exception:
         signature = hashlib.sha256(proof_data.encode()).hexdigest()
         return {"signature": signature, "proof_data": data}
 
+
 from .adversarial.detector import AdversarialDetector
 from .ees.metadata import EESMetadata
 from .policy.validator import PolicyValidator
