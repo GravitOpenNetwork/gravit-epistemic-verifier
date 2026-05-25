@@ -1,6 +1,6 @@
 # Contributing to Gravit Epistemic Verifier
 
-Thank you for your interest in contributing! This document provides guidelines for contributing to this project.
+Thank you for your interest in contributing.
 
 ## Code of Conduct
 
@@ -26,13 +26,13 @@ Open an issue with:
 ### Pull Request Process
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/your-feature`)
+2. Create a feature branch
 3. Write tests for your changes
-4. Ensure all tests pass (`pytest tests/ -v`)
-5. Run linter (`ruff check gravit_verifier/`)
-6. Run formatter (`black gravit_verifier/ --line-length 88`)
-7. Commit with clear message (Conventional Commits preferred)
-8. Push and open a Pull Request to `main` branch
+4. Ensure all tests pass: `pytest tests/ -v`
+5. Run linter: `ruff check gravit_verifier/`
+6. Run formatter: `black gravit_verifier/ --line-length 88`
+7. Commit with a clear message
+8. Push and open a Pull Request to the `main` branch
 
 ## Development Setup
 
@@ -46,9 +46,8 @@ pytest tests/ -v
 ## Coding Standards
 
 - Language: All code (comments, strings, variables) in English only
-- Style: Black (line-length 88)
+- Style: Black with line length 88
 - Linting: Ruff
-- Types: MyPy (optional but recommended)
 - Tests: Pytest with coverage > 80%
 
 ## Commit Message Format
@@ -56,11 +55,11 @@ pytest tests/ -v
 Use Conventional Commits:
 
 ```text
-<type>(<scope>): <subject>
+type(scope): subject
 
-<body>
+Body
 
-<footer>
+Footer
 ```
 
 Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, `ci`
@@ -78,13 +77,13 @@ Closes #42
 
 Maintainers only:
 
-1. Update version in `pyproject.toml`
-2. Update `CHANGELOG.md`
-3. Create PR with `release/vX.Y.Z` branch
-4. After merge, create GitHub Release with tag `vX.Y.Z`
+- Update version in `pyproject.toml`
+- Update `CHANGELOG.md`
+- Create a PR with branch name `release/vX.Y.Z`
+- After merge, create a GitHub Release with tag `vX.Y.Z`
 
-## Questions?
+## Questions
 
-Open an issue or contact maintainers at `info@gravit.network`
+Open an issue or contact maintainers at `info@gravit.network`.
 
-Thank you for contributing!
+Thank you for contributing.
