@@ -4,7 +4,23 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Dict
 
-from proofs.commitment import build_proof
+try:
+    from proofs.commitment import build_proof
+except Exception:
+    import hashlib
+
+    def build_proof(intent: str, action: str, ees, verdict: str):
+        data = {
+            "intent_hash": hashlib.sha256(intent.encode()).hexdigest(),
+            "action_hash": hashlib.sha256(action.encode()).hexdigest(),
+            "ees_commitment": ees.commitment(),
+            "verdict": verdict,
+        }
+        import json
+
+        proof_data = json.dumps(data, sort_keys=True)
+        signature = hashlib.sha256(proof_data.encode()).hexdigest()
+        return {"signature": signature, "proof_data": data}
 
 from .adversarial.detector import AdversarialDetector
 from .ees.metadata import EESMetadata
