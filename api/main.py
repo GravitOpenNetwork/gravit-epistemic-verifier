@@ -1,11 +1,17 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from prometheus_fastapi_instrumentator import Instrumentator
-from gravit_verifier.engine import EpistemicEngine
+
 from api.schema import VerificationRequest, VerificationResponse
+from gravit_verifier.engine import EpistemicEngine
 
 app = FastAPI(title="Gravit Epistemic Verifier", version="1.0.0")
-app.add_middleware(CORSMiddleware, allow_origins=[""], allow_methods=[""], allow_headers=["*"])
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 Instrumentator().instrument(app).expose(app)
 engine = EpistemicEngine()
 

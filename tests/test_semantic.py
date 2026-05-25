@@ -1,5 +1,5 @@
-import pytest
 from gravit_verifier.semantic import SemanticVerifier
+
 
 def test_semantic_verifier():
     verifier = SemanticVerifier()

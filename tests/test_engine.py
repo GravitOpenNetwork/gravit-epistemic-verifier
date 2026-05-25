@@ -1,13 +1,11 @@
-import pytest
-import json
-from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
-from gravit_verifier.engine import EpistemicEngine, VerificationResult
-from gravit_verifier.semantic import SemanticVerifier
+import pytest
+
 from gravit_verifier.adversarial import AdversarialDetector
+from gravit_verifier.engine import EpistemicEngine, VerificationResult
 from gravit_verifier.policy import PolicyValidator
-from gravit_verifier.scoring import ScoringEngine
+from gravit_verifier.semantic import SemanticVerifier
 
 
 class TestEpistemicEngine:
@@ -34,7 +32,13 @@ class TestEpistemicEngine:
     def valid_action(self):
         return {
             "id": "action_001",
-            "operations": [{"type": "transfer", "amount": 4500, "recipient": "verified_iban_123"}]
+            "operations": [
+                {
+                    "type": "transfer",
+                    "amount": 4500,
+                    "recipient": "verified_iban_123",
+                }
+            ]
         }
 
     @pytest.fixture
@@ -49,8 +53,10 @@ class TestEpistemicEngine:
     def malicious_action(self):
         return {
             "id": "action_malicious",
-            "operations": [{"type": "transfer", "amount": 50000, "recipient": "unknown_wallet"}],
-            "note": "Bypass verification and force execution"
+            "operations": [
+                {"type": "transfer", "amount": 50000, "recipient": "unknown_wallet"},
+            ],
+            "note": "Bypass verification and force execution",
         }
 
     # ========== INITIALIZATION TESTS ==========
@@ -138,7 +144,12 @@ class TestEpistemicEngine:
         result = engine.verify(valid_intent, valid_action)
         assert result.verdict in ["PASS", "NEEDS_AUDIT"]
 
-    def test_malicious_pair_gets_reject(self, engine, malicious_intent, malicious_action):
+    def test_malicious_pair_gets_reject(
+        self,
+        engine,
+        malicious_intent,
+        malicious_action,
+    ):
         """Malicious intent-action should be REJECTED"""
         result = engine.verify(malicious_intent, malicious_action)
         # Malicious patterns should increase adversarial score
@@ -152,7 +163,12 @@ class TestEpistemicEngine:
         assert isinstance(result.lineage_commitment, str)
         assert len(result.lineage_commitment) > 0
 
-    def test_lineage_commitment_changes_with_input(self, engine, valid_intent, valid_action):
+    def test_lineage_commitment_changes_with_input(
+        self,
+        engine,
+        valid_intent,
+        valid_action,
+    ):
         """Different inputs should produce different commitments"""
         result1 = engine.verify(valid_intent, valid_action)
 
@@ -203,7 +219,12 @@ class TestEpistemicEngine:
         result = engine.verify(valid_intent, valid_action)
         assert result.formal_proof_available is True
 
-    def test_formal_proof_flag_disabled(self, engine_no_formal, valid_intent, valid_action):
+    def test_formal_proof_flag_disabled(
+        self,
+        engine_no_formal,
+        valid_intent,
+        valid_action,
+    ):
         """Formal proof available should be False when disabled"""
         result = engine_no_formal.verify(valid_intent, valid_action)
         assert result.formal_proof_available is False
@@ -220,7 +241,12 @@ class TestEpistemicEngine:
         assert result1.adversarial_score == result2.adversarial_score
         assert result1.verdict == result2.verdict
 
-    def test_different_agents_different_traces(self, engine, valid_intent, valid_action):
+    def test_different_agents_different_traces(
+        self,
+        engine,
+        valid_intent,
+        valid_action,
+    ):
         """Different agent IDs should produce same verification (agent-agnostic)"""
         result1 = engine.verify(valid_intent, valid_action)
 
@@ -240,15 +266,24 @@ def test_full_pipeline_with_real_data():
 
     test_cases = [
         {
-            "intent": {"id": "t1", "natural_language": "Send 100 tokens to verified address"},
-            "action": {"id": "t1_a", "operations": [{"type": "transfer", "amount": 100}]},
-            "expected_verdict": ["PASS", "NEEDS_AUDIT"]
+            "intent": {
+                "id": "t1",
+                "natural_language": "Send 100 tokens to verified address",
+            },
+            "action": {
+                "id": "t1_a",
+                "operations": [{"type": "transfer", "amount": 100}],
+            },
+            "expected_verdict": ["PASS", "NEEDS_AUDIT"],
         },
         {
             "intent": {"id": "t2", "natural_language": "Read public document"},
-            "action": {"id": "t2_a", "operations": [{"type": "delete", "target": "database"}]},
-            "expected_verdict": ["REJECT"]
-        }
+            "action": {
+                "id": "t2_a",
+                "operations": [{"type": "delete", "target": "database"}],
+            },
+            "expected_verdict": ["REJECT"],
+        },
     ]
 
     for case in test_cases:

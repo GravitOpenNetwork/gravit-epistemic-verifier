@@ -1,6 +1,8 @@
 import json
 import time
+
 from gravit_verifier.engine import EpistemicEngine
+
 
 def run_benchmarks():
     engine = EpistemicEngine()
@@ -28,13 +30,18 @@ def run_benchmarks():
         else:
             status = "❌"
 
-        print(f"{status} Case {i+1}: {result['verdict']} | Trust: {result['epistemic_trust_score']:.3f} | {duration*1000:.1f}ms")
+        trust = result.get("epistemic_trust_score", 0.0)
+        verdict = result.get("verdict", "UNKNOWN")
+        print(
+            f"{status} Case {i+1}: {verdict} | Trust: {trust:.3f} | "
+            f"{duration*1000:.1f}ms"
+        )
 
     accuracy = correct / len(dataset)
     avg_time = total_time / len(dataset)
 
     print("\n" + "="*60)
-    print(f"BENCHMARK RESULTS")
+    print("BENCHMARK RESULTS")
     print(f"Accuracy: {accuracy:.1%} ({correct}/{len(dataset)})")
     print(f"Avg latency: {avg_time*1000:.1f} ms")
     print(f"Throughput: {1/avg_time:.1f} verifications/sec")

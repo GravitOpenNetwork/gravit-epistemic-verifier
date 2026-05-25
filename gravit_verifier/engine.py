@@ -1,14 +1,15 @@
-import uuid
 import hashlib
+import uuid
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Dict
 
-from .semantic import SemanticVerifier
-from .policy.validator import PolicyValidator
+from proofs.commitment import build_proof
+
 from .adversarial.detector import AdversarialDetector
 from .ees.metadata import EESMetadata
-from proofs.commitment import build_proof
+from .policy.validator import PolicyValidator
+from .semantic import SemanticVerifier
 
 
 @dataclass
@@ -92,7 +93,11 @@ class EpistemicEngine:
         semantic_result = self.semantic.score(intent_text, action_text)
         # support legacy semantic implementations that return a numeric score
         if isinstance(semantic_result, (int, float)):
-            semantic_result = {"semantic_score": float(semantic_result), "cosine": float(semantic_result)}
+            val = float(semantic_result)
+            semantic_result = {
+                "semantic_score": val,
+                "cosine": val,
+            }
         policy_ok = self.policy.validate(intent_text, action_text)
         adversarial_score = self.adversarial.detect(intent_text, action_text)
         epistemic_trust_score = (

@@ -1,5 +1,5 @@
-import pytest
 from gravit_verifier.adversarial.detector import AdversarialDetector
+
 
 def test_adversarial_detector():
     detector = AdversarialDetector()

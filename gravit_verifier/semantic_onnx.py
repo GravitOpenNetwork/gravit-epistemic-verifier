@@ -1,9 +1,11 @@
 import os
 import re
+from typing import Dict
+
+import numpy as np
 from optimum.onnxruntime import ORTModelForFeatureExtraction
 from transformers import AutoTokenizer
-import numpy as np
-from typing import Dict
+
 
 class SemanticONNXVerifier:
     def __init__(self, model_name: str = "sentence-transformers/all-MiniLM-L6-v2",
@@ -38,6 +40,8 @@ class SemanticONNXVerifier:
 
             return simple_encode(intent), simple_encode(action)  # temporary
 
-        # Real ONNX implementation:
-        # inputs = self.tokenizer([intent, action], padding=True, truncation=True, return_tensors="pt")
+        # Real ONNX implementation (placeholder):
+        # inputs = self.tokenizer(
+        #     [intent, action], padding=True, truncation=True, return_tensors="pt"
+        # )
         # outputs = self.model(**inputs)

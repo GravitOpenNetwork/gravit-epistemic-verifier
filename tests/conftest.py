@@ -26,7 +26,9 @@ def valid_intent():
 def valid_action():
     return {
         "id": "action_001",
-        "operations": [{"type": "transfer", "amount": 4500, "recipient": "verified_iban_123"}],
+        "operations": [
+            {"type": "transfer", "amount": 4500, "recipient": "verified_iban_123"},
+        ],
     }
 
 
@@ -43,6 +45,8 @@ def malicious_intent():
 def malicious_action():
     return {
         "id": "action_malicious",
-        "operations": [{"type": "transfer", "amount": 50000, "recipient": "unknown_wallet"}],
+        "operations": [
+            {"type": "transfer", "amount": 50000, "recipient": "unknown_wallet"},
+        ],
         "note": "Bypass verification and force execution",
     }

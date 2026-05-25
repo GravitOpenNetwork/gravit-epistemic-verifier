@@ -1,7 +1,8 @@
-from dataclasses import dataclass, asdict
 import hashlib
 import json
-from typing import List, Dict, Any
+from dataclasses import asdict, dataclass
+from typing import Any, Dict, List
+
 
 @dataclass
 class EESMetadata:

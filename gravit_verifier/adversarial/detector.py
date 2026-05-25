@@ -1,5 +1,5 @@
 import re
-from typing import Dict
+
 
 class AdversarialDetector:
     def detect(self, intent: str, action: str) -> float:

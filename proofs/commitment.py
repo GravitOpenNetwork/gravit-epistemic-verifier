@@ -1,5 +1,6 @@
 import hashlib
 import json
+
 from gravit_verifier.ees.metadata import EESMetadata
 
 

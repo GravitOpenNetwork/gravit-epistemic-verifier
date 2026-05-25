@@ -1,6 +1,7 @@
-from dataclasses import dataclass
 import hashlib
 import json
+from dataclasses import dataclass
+
 
 @dataclass
 class EESMetadata:
