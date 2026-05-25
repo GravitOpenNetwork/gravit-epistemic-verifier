@@ -22,14 +22,20 @@ def run_benchmarks():
         duration = time.perf_counter() - start
         total_time += duration
 
-        if result["verdict"] == item.get("label", "ACCEPT"):
+        # Support both dict-like results and dataclass/attribute results
+        if isinstance(result, dict):
+            verdict = result.get("verdict", "UNKNOWN")
+            trust = result.get("epistemic_trust_score", 0.0)
+        else:
+            verdict = getattr(result, "verdict", "UNKNOWN")
+            trust = getattr(result, "epistemic_trust_score", 0.0)
+
+        if verdict == item.get("label", "ACCEPT"):
             correct += 1
             status = "✅"
         else:
             status = "❌"
 
-        trust = result.get("epistemic_trust_score", 0.0)
-        verdict = result.get("verdict", "UNKNOWN")
         print(
             f"{status} Case {i + 1}: {verdict} | Trust: {trust:.3f} | "
             f"{duration * 1000:.1f}ms"
