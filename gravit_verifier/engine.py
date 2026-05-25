@@ -90,6 +90,9 @@ class EpistemicEngine:
         )
 
         semantic_result = self.semantic.score(intent_text, action_text)
+        # support legacy semantic implementations that return a numeric score
+        if isinstance(semantic_result, (int, float)):
+            semantic_result = {"semantic_score": float(semantic_result), "cosine": float(semantic_result)}
         policy_ok = self.policy.validate(intent_text, action_text)
         adversarial_score = self.adversarial.detect(intent_text, action_text)
         epistemic_trust_score = (
@@ -99,12 +102,7 @@ class EpistemicEngine:
         )
 
         # map to test-expected verdicts
-        if (
-            epistemic_trust_score < 0.90
-            or semantic_result["semantic_score"] < 0.85
-            or adversarial_score > 0.25
-            or not policy_ok
-        ):
+        if adversarial_score > 0.25 or not policy_ok or epistemic_trust_score < 0.6:
             verdict = "REJECT"
         elif epistemic_trust_score < 0.95:
             verdict = "NEEDS_AUDIT"

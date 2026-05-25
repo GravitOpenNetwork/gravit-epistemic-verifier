@@ -1,5 +1,5 @@
 class PolicyValidator:
-    def init(self):
+    def __init__(self):
         self.forbidden = ["blacklist", "sanctioned", "unknown wallet", "hack", "launder"]
 
     def validate(self, intent: str, action: str) -> bool:
