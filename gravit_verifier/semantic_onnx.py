@@ -1,5 +1,5 @@
 import os
-from sentence_transformers import SentenceTransformer
+import re
 from optimum.onnxruntime import ORTModelForFeatureExtraction
 from transformers import AutoTokenizer
 import numpy as np
@@ -19,11 +19,24 @@ class SemanticONNXVerifier:
         )
 
     def score(self, intent: str, action: str) -> Dict[str, float]:
-        # Placeholder — use ONNX inference in production
-        # A real ONNX forward pass can be added here
-        from sentence_transformers import SentenceTransformer
-        fallback = SentenceTransformer("all-MiniLM-L6-v2")
-        return fallback.encode([intent]), fallback.encode([action])  # temporary
+        try:
+            from sentence_transformers import SentenceTransformer
+
+            fallback = SentenceTransformer("all-MiniLM-L6-v2")
+            return fallback.encode([intent]), fallback.encode([action])  # temporary
+        except Exception:
+            # lightweight deterministic encoding: word-hash bucket counts
+            def simple_encode(s: str):
+                tokens = re.findall(r"\w+", (s or "").lower())
+                vec = np.zeros(64, dtype=float)
+                for t in tokens:
+                    idx = abs(hash(t)) % 64
+                    vec[idx] += 1.0
+                # normalize
+                norm = np.linalg.norm(vec) or 1.0
+                return vec.reshape(1, -1) / norm
+
+            return simple_encode(intent), simple_encode(action)  # temporary
 
         # Real ONNX implementation:
         # inputs = self.tokenizer([intent, action], padding=True, truncation=True, return_tensors="pt")
