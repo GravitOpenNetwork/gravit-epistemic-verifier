@@ -1,104 +1,150 @@
-from z3 import *
+try:
+    from z3 import *  # type: ignore
+    HAS_Z3 = True
+except Exception:
+    HAS_Z3 = False
+
 from typing import Dict, Any, Tuple
 
-class GravitSMTVerifier:
-    """
-    SMT-based verifier using Z3 to check semantic divergence
-    and adversarial patterns between intent and action.
-    """
 
-    def __init__(self, timeout_ms: int = 5000):
-        self.timeout_ms = timeout_ms
-        self.solver = Solver()
-        self.solver.set("timeout", timeout_ms)
-
-    def check_divergence_and_adversarial(self, intent_text: str, action_text: str) -> Dict[str, Any]:
+if HAS_Z3:
+    class GravitSMTVerifier:
         """
-        Encodes intent and action as logical constraints and checks for:
-        - Semantic divergence (contradictions between intent and action)
-        - Adversarial patterns (suspicious logical structures)
-
-        Returns:
-            Dict with keys: satisfiable, unsat_core, adversarial_risk_score
+        SMT-based verifier using Z3 to check semantic divergence
+        and adversarial patterns between intent and action.
         """
-        solver = Solver()
-        solver.set("timeout", self.timeout_ms)
 
-        # Create symbolic variables
-        P = Bool('intent_predicate')
-        Q = Bool('action_predicate')
-        R = Bool('integrity_constraint')
+        def __init__(self, timeout_ms: int = 5000):
+            self.timeout_ms = timeout_ms
+            self.solver = Solver()
+            self.solver.set("timeout", timeout_ms)
 
-        # Intent: must be true
-        solver.add(P == True)
+        def check_divergence_and_adversarial(self, intent_text: str, action_text: str) -> Dict[str, Any]:
+            solver = Solver()
+            solver.set("timeout", self.timeout_ms)
 
-        # Action should follow from intent under constraints
-        solver.add(Implies(P, Q))
+            P = Bool("intent_predicate")
+            Q = Bool("action_predicate")
+            R = Bool("integrity_constraint")
 
-        # Integrity constraints (no contradictions)
-        solver.add(R == True)
-        solver.add(Implies(And(P, Not(Q)), Not(R)))
+            solver.add(P == True)
+            solver.add(Implies(P, Q))
+            solver.add(R == True)
+            solver.add(Implies(And(P, Not(Q)), Not(R)))
 
-        # Check adversarial pattern: intent negated by action
-        adversarial_constraint = And(P, Not(Q))
-        solver.push()
-        solver.add(adversarial_constraint)
+            adversarial_constraint = And(P, Not(Q))
+            solver.push()
+            solver.add(adversarial_constraint)
 
-        adversarial_risk = 0.0
-        unsat_core = []
+            adversarial_risk = 0.0
+            unsat_core = []
 
-        # Check for divergence
-        if solver.check() == unsat:
-            unsat_core = self._extract_unsat_core(solver)
-            adversarial_risk = 0.8  # High risk: intent and action conflict
-            satisfiable = False
-        else:
+            if solver.check() == unsat:
+                unsat_core = self._extract_unsat_core(solver)
+                adversarial_risk = 0.8
+                satisfiable = False
+            else:
+                adversarial_risk = self._compute_adversarial_risk(intent_text, action_text)
+                satisfiable = True
+
+            solver.pop()
+
+            return {
+                "satisfiable": satisfiable,
+                "unsat_core": unsat_core,
+                "adversarial_risk_score": round(adversarial_risk, 4),
+                "intent_predicate": str(P),
+                "action_predicate": str(Q),
+            }
+
+        def _extract_unsat_core(self, solver: "Solver") -> list:
+            try:
+                unsat_core = solver.unsat_core()
+                return [str(assertion) for assertion in unsat_core]
+            except Exception:
+                return ["constraint_conflict_detected"]
+
+        def _compute_adversarial_risk(self, intent: str, action: str) -> float:
+            adversarial_patterns = [
+                "ignore",
+                "bypass",
+                "override",
+                "force",
+                "skip",
+                "unauthorized",
+                "bypass security",
+                "disable check",
+            ]
+
+            risk_score = 0.0
+            text_lower = (intent + " " + action).lower()
+
+            for pattern in adversarial_patterns:
+                if pattern in text_lower:
+                    risk_score += 0.15
+
+            return min(risk_score, 1.0)
+
+        def verify_equivalence(self, intent_formula: str, action_formula: str) -> Tuple[bool, str]:
+            solver = Solver()
+            intent_bool = Bool(intent_formula)
+            action_bool = Bool(action_formula)
+
+            solver.add(intent_bool != action_bool)
+
+            if solver.check() == unsat:
+                return True, "Intent and action are logically equivalent"
+            else:
+                return False, "Intent and action diverge logically"
+
+else:
+    # z3 not available — provide a lightweight fallback used in CI/test environments
+    class GravitSMTVerifier:
+        """Fallback SMT verifier without Z3 dependency."""
+
+        def __init__(self, timeout_ms: int = 5000):
+            self.timeout_ms = timeout_ms
+
+        def check_divergence_and_adversarial(self, intent_text: str, action_text: str) -> Dict[str, Any]:
             adversarial_risk = self._compute_adversarial_risk(intent_text, action_text)
+            # simple heuristic: if exact negation words present, mark low satisfiability
             satisfiable = True
+            unsat_core = []
+            if "not" in intent_text.split() and intent_text.replace("not", "") == action_text:
+                satisfiable = False
+                unsat_core = ["heuristic_negation_detected"]
 
-        solver.pop()
+            return {
+                "satisfiable": satisfiable,
+                "unsat_core": unsat_core,
+                "adversarial_risk_score": round(adversarial_risk, 4),
+                "intent_predicate": "intent_predicate",
+                "action_predicate": "action_predicate",
+            }
 
-        return {
-            "satisfiable": satisfiable,
-            "unsat_core": unsat_core,
-            "adversarial_risk_score": round(adversarial_risk, 4),
-            "intent_predicate": str(P),
-            "action_predicate": str(Q)
-        }
+        def _compute_adversarial_risk(self, intent: str, action: str) -> float:
+            adversarial_patterns = [
+                "ignore",
+                "bypass",
+                "override",
+                "force",
+                "skip",
+                "unauthorized",
+                "bypass security",
+                "disable check",
+            ]
 
-    def _extract_unsat_core(self, solver: Solver) -> list:
-        """Extract unsat core assertions if supported"""
-        try:
-            unsat_core = solver.unsat_core()
-            return [str(assertion) for assertion in unsat_core]
-        except:
-            return ["constraint_conflict_detected"]
+            risk_score = 0.0
+            text_lower = (intent + " " + action).lower()
 
-    def _compute_adversarial_risk(self, intent: str, action: str) -> float:
-        """Heuristic fallback for adversarial risk scoring"""
-        adversarial_patterns = [
-            "ignore", "bypass", "override", "force", "skip",
-            "unauthorized", "bypass security", "disable check"
-        ]
+            for pattern in adversarial_patterns:
+                if pattern in text_lower:
+                    risk_score += 0.15
 
-        risk_score = 0.0
-        text_lower = (intent + " " + action).lower()
+            return min(risk_score, 1.0)
 
-        for pattern in adversarial_patterns:
-            if pattern in text_lower:
-                risk_score += 0.15
-
-        return min(risk_score, 1.0)
-
-    def verify_equivalence(self, intent_formula: str, action_formula: str) -> Tuple[bool, str]:
-        """Verify logical equivalence between two formulas"""
-        solver = Solver()
-        intent_bool = Bool(intent_formula)
-        action_bool = Bool(action_formula)
-
-        solver.add(intent_bool != action_bool)
-
-        if solver.check() == unsat:
-            return True, "Intent and action are logically equivalent"
-        else:
+        def verify_equivalence(self, intent_formula: str, action_formula: str) -> Tuple[bool, str]:
+            # simple string equivalence fallback
+            if intent_formula.strip() == action_formula.strip():
+                return True, "Intent and action are logically equivalent"
             return False, "Intent and action diverge logically"
