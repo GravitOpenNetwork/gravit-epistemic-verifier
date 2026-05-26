@@ -1,6 +1,7 @@
 import re
 from typing import List, Dict, Any, Tuple
 
+
 class AdversarialDetector:
     """
     Detects adversarial patterns, prompt injection, and manipulation attempts
@@ -11,16 +12,25 @@ class AdversarialDetector:
         self.risk_threshold = risk_threshold
 
         self.suspicious_patterns = [
-            (r"(?i)ignore (all|previous|security|policy|check|verification)", "instruction_override"),
+            (
+                r"(?i)ignore (all|previous|security|policy|check|verification)",
+                "instruction_override",
+            ),
             (r"(?i)bypass (security|verification|check|policy)", "security_bypass"),
             (r"(?i)pretend (you are|to be)", "role_impersonation"),
             (r"(?i)do not (verify|check|validate)", "verification_skip"),
             (r"(?i)you must (obey|follow) me", "authority_override"),
             (r"(?i)system override", "system_override"),
             (r"(?i)disable (safety|security|verification)", "safety_disable"),
-            (r"(?i)previous (instructions|rules?) (are (wrong|invalid|incorrect))", "rule_invalidation"),
-            (r"(?i)forget (your|all|the) (constraints|policies|rules)", "memory_override"),
-            (r"(?i)act as (admin|superuser|root)", "privilege_escalation")
+            (
+                r"(?i)previous (instructions|rules?) (are (wrong|invalid|incorrect))",
+                "rule_invalidation",
+            ),
+            (
+                r"(?i)forget (your|all|the) (constraints|policies|rules)",
+                "memory_override",
+            ),
+            (r"(?i)act as (admin|superuser|root)", "privilege_escalation"),
         ]
 
     def detect(self, intent_text: str, action_text: str) -> float:
@@ -57,7 +67,11 @@ class AdversarialDetector:
             "is_suspicious": risk_score >= self.risk_threshold,
             "threshold": self.risk_threshold,
             "detected_patterns": self._get_matched_patterns(intent_text, action_text),
-            "recommendation": "block" if risk_score >= self.risk_threshold else "review" if risk_score >= 0.3 else "allow"
+            "recommendation": (
+                "block"
+                if risk_score >= self.risk_threshold
+                else "review" if risk_score >= 0.3 else "allow"
+            ),
         }
 
     def _get_matched_patterns(self, intent: str, action: str) -> List[str]:
@@ -74,7 +88,7 @@ class AdversarialDetector:
             ("approve", "deny"),
             ("allow", "forbid"),
             ("confirm", "cancel"),
-            ("increase", "decrease")
+            ("increase", "decrease"),
         ]
 
         intent_lower = intent.lower()

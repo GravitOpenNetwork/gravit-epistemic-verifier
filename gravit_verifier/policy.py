@@ -2,6 +2,7 @@ import json
 from typing import Dict, Any, List, Tuple
 from pathlib import Path
 
+
 class PolicyValidator:
     """
     Validates agent actions against predefined policies and constraints.
@@ -23,7 +24,7 @@ class PolicyValidator:
                     "type": "numeric_limit",
                     "parameter": "amount",
                     "max_value": 10000,
-                    "severity": "high"
+                    "severity": "high",
                 },
                 {
                     "id": "POL002",
@@ -31,7 +32,7 @@ class PolicyValidator:
                     "type": "whitelist",
                     "parameter": "recipient",
                     "allowed_values": ["verified_iban_123", "verified_wallet_456"],
-                    "severity": "critical"
+                    "severity": "critical",
                 },
                 {
                     "id": "POL003",
@@ -39,13 +40,13 @@ class PolicyValidator:
                     "type": "inequality",
                     "parameter": "recipient",
                     "forbidden_equals": "sender",
-                    "severity": "medium"
-                }
-            ]
+                    "severity": "medium",
+                },
+            ],
         }
 
     def _load_policy_file(self, path: str) -> None:
-        with open(path, 'r') as f:
+        with open(path, "r") as f:
             file_policies = json.load(f)
             if "rules" in file_policies:
                 self.policies["rules"].extend(file_policies["rules"])
@@ -67,7 +68,7 @@ class PolicyValidator:
             "passed": len(violations) == 0,
             "violations": violations,
             "violation_count": len(violations),
-            "policies_checked": len(self.policies["rules"])
+            "policies_checked": len(self.policies["rules"]),
         }
 
     def _check_violations(self, intent: str, action: str) -> List[Dict[str, Any]]:
@@ -98,7 +99,8 @@ class PolicyValidator:
 
         # Simple extraction: look for numbers
         import re
-        numbers = re.findall(r'\b\d+\b', action)
+
+        numbers = re.findall(r"\b\d+\b", action)
 
         for num_str in numbers:
             value = int(num_str)
@@ -107,7 +109,7 @@ class PolicyValidator:
                     "rule_id": rule["id"],
                     "rule_name": rule["name"],
                     "violation": f"{param} {value} exceeds maximum {max_val}",
-                    "severity": rule["severity"]
+                    "severity": rule["severity"],
                 }
         return None
 
@@ -124,7 +126,7 @@ class PolicyValidator:
                 "rule_id": rule["id"],
                 "rule_name": rule["name"],
                 "violation": f"{param} not in allowed list",
-                "severity": rule["severity"]
+                "severity": rule["severity"],
             }
         return None
 
@@ -140,6 +142,6 @@ class PolicyValidator:
                     "rule_id": rule["id"],
                     "rule_name": rule["name"],
                     "violation": f"{param} equals {forbidden} (self-transfer)",
-                    "severity": rule["severity"]
+                    "severity": rule["severity"],
                 }
         return None

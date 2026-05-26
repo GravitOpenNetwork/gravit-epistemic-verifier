@@ -2,6 +2,7 @@ import numpy as np
 from typing import List, Dict, Any
 from difflib import SequenceMatcher
 
+
 class SemanticVerifier:
     """
     Measures semantic similarity between intent and action
@@ -46,7 +47,22 @@ class SemanticVerifier:
 
     def _extract_keywords(self, text: str) -> List[str]:
         """Simple keyword extraction (stopword filtering)"""
-        stopwords = {'the', 'a', 'an', 'and', 'or', 'to', 'of', 'for', 'in', 'on', 'at', 'by', 'with', 'without'}
+        stopwords = {
+            "the",
+            "a",
+            "an",
+            "and",
+            "or",
+            "to",
+            "of",
+            "for",
+            "in",
+            "on",
+            "at",
+            "by",
+            "with",
+            "without",
+        }
         words = text.lower().split()
         return [w for w in words if w not in stopwords and len(w) > 2]
 
@@ -59,6 +75,10 @@ class SemanticVerifier:
             "score": round(score, 4),
             "passed": score >= self.threshold,
             "threshold": self.threshold,
-            "lexical_similarity": round(self._lexical_similarity(intent_text, action_text), 4),
-            "structural_similarity": round(self._structural_similarity(intent_text, action_text), 4)
+            "lexical_similarity": round(
+                self._lexical_similarity(intent_text, action_text), 4
+            ),
+            "structural_similarity": round(
+                self._structural_similarity(intent_text, action_text), 4
+            ),
         }

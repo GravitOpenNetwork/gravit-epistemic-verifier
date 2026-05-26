@@ -12,5 +12,5 @@ __all__ = [
     "AdversarialDetector",
     "PolicyValidator",
     "ScoringEngine",
-    "WeightedScore"
+    "WeightedScore",
 ]
