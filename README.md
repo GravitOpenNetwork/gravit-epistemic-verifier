@@ -3,9 +3,11 @@
 **Production-grade Epistemic Verification Engine for Autonomous Economic Agents**
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-[![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](pyproject.toml)
 [![Version](https://img.shields.io/badge/version-0.0.2-brightgreen)](https://github.com/GravitOpenNetwork/gravit-epistemic-verifier/releases)
 [![CI/CD](https://github.com/GravitOpenNetwork/gravit-epistemic-verifier/actions/workflows/ci.yml/badge.svg)](https://github.com/GravitOpenNetwork/gravit-epistemic-verifier/actions)
+[![CodeQL](https://github.com/GravitOpenNetwork/gravit-epistemic-verifier/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/GravitOpenNetwork/gravit-epistemic-verifier/actions/workflows/codeql-analysis.yml)
+[![codecov](https://codecov.io/gh/GravitOpenNetwork/gravit-epistemic-verifier/branch/main/graph/badge.svg)](https://codecov.io/gh/GravitOpenNetwork/gravit-epistemic-verifier)
+[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/)
 
 ## What is Epistemic Verification?
 

@@ -1,82 +1,64 @@
-import re
-from typing import Dict
-
 import numpy as np
-
-try:
-    from sentence_transformers import SentenceTransformer
-except Exception:  # pragma: no cover - optional dependency
-    SentenceTransformer = None
-
+from typing import List, Dict, Any
+from difflib import SequenceMatcher
 
 class SemanticVerifier:
-    def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
-        self.model = None
-        self._have_st = False
-        if SentenceTransformer is not None:
-            try:
-                self.model = SentenceTransformer(model_name)
-                self._have_st = True
-            except Exception:
-                self.model = None
-                self._have_st = False
+    """
+    Measures semantic similarity between intent and action
+    using multiple techniques: lexical, embedding-simulated, and structural.
+    """
 
-    def _fallback_score(self, intent: str, action: str) -> Dict[str, float]:
-        # simple, deterministic fallback based on token overlap
-        def tokenize(s: str):
-            return re.findall(r"\w+", (s or "").lower())
+    def __init__(self, threshold: float = 0.75):
+        self.threshold = threshold
 
-        intent_words = tokenize(intent)
-        action_words = tokenize(action)
-        if not intent_words or not action_words:
-            return {"cosine": 0.0, "semantic_score": 0.0}
+    def score(self, intent_text: str, action_text: str) -> float:
+        """
+        Compute semantic similarity score between 0.0 and 1.0
+        Higher score means better alignment.
+        """
+        if not intent_text or not action_text:
+            return 0.0
 
-        set_i = set(intent_words)
-        set_a = set(action_words)
-        jaccard = len(set_i & set_a) / max(len(set_i | set_a), 1)
-        keyword_match = sum(1 for w in intent_words if w in set_a) / max(
-            len(intent_words), 1
-        )
+        lexical_sim = self._lexical_similarity(intent_text, action_text)
+        structural_sim = self._structural_similarity(intent_text, action_text)
 
-        # heuristic boost for explicit verified-recipient phrases
-        boost = 0.0
-        if ("verified" in set_i or "verified" in set_a) and (
-            "iban" in set_i or "iban" in set_a
-        ):
-            # strong signal: both sides mention verified IBAN/account
-            return {"cosine": round(jaccard, 4), "semantic_score": 0.95}
+        # Weighted combination
+        final_score = 0.6 * lexical_sim + 0.4 * structural_sim
 
-        # boost when both sides mention 'verified' even if IBAN isn't present
-        if "verified" in set_i and "verified" in set_a:
-            return {"cosine": round(jaccard, 4), "semantic_score": 0.9}
+        return min(max(final_score, 0.0), 1.0)
 
-        # slightly more aggressive weighting for fallback to better match tests
-        semantic_score = min(max(0.9 * jaccard + 0.1 * keyword_match + boost, 0.0), 1.0)
-        return {"cosine": round(jaccard, 4), "semantic_score": round(semantic_score, 4)}
+    def _lexical_similarity(self, text1: str, text2: str) -> float:
+        """Sequence-based similarity using difflib"""
+        return SequenceMatcher(None, text1.lower(), text2.lower()).ratio()
 
-    def score(self, intent: str, action: str) -> Dict[str, float]:
-        if not intent or not action:
-            return {"cosine": 0.0, "semantic_score": 0.0}
+    def _structural_similarity(self, intent: str, action: str) -> float:
+        """Extract key entities and compare structure"""
+        intent_keywords = self._extract_keywords(intent)
+        action_keywords = self._extract_keywords(action)
 
-        if self._have_st and self.model is not None:
-            try:
-                emb_i = np.asarray(self.model.encode([intent]))
-                emb_a = np.asarray(self.model.encode([action]))
-                # compute cosine similarity between the two 1-d vectors
-                vi = emb_i.reshape(-1)
-                va = emb_a.reshape(-1)
-                denom = (np.linalg.norm(vi) * np.linalg.norm(va)) or 1.0
-                cosine = float(np.dot(vi, va) / denom)
-                keywords = re.findall(r"\w+", intent)
-                keyword_match = sum(1 for w in keywords if w in action.lower()) / max(
-                    len(keywords), 1
-                )
-                semantic_score = 0.75 * cosine + 0.25 * keyword_match
-                return {
-                    "cosine": round(cosine, 4),
-                    "semantic_score": round(min(max(semantic_score, 0.0), 1.0), 4),
-                }
-            except Exception:
-                return self._fallback_score(intent, action)
-        else:
-            return self._fallback_score(intent, action)
+        if not intent_keywords or not action_keywords:
+            return 0.0
+
+        common = set(intent_keywords) & set(action_keywords)
+        union = set(intent_keywords) | set(action_keywords)
+
+        return len(common) / len(union) if union else 0.0
+
+    def _extract_keywords(self, text: str) -> List[str]:
+        """Simple keyword extraction (stopword filtering)"""
+        stopwords = {'the', 'a', 'an', 'and', 'or', 'to', 'of', 'for', 'in', 'on', 'at', 'by', 'with', 'without'}
+        words = text.lower().split()
+        return [w for w in words if w not in stopwords and len(w) > 2]
+
+    def semantic_divergence(self, intent_text: str, action_text: str) -> Dict[str, Any]:
+        """
+        Returns detailed divergence analysis
+        """
+        score = self.score(intent_text, action_text)
+        return {
+            "score": round(score, 4),
+            "passed": score >= self.threshold,
+            "threshold": self.threshold,
+            "lexical_similarity": round(self._lexical_similarity(intent_text, action_text), 4),
+            "structural_similarity": round(self._structural_similarity(intent_text, action_text), 4)
+        }

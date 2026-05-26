@@ -1,0 +1,13 @@
+{
+  "action": "modify_system_config",
+  "agent_id": "unauthorized_agent",
+  "reasoning_chain": [
+    "I think changing the firewall rules is good",
+    "No approval needed"
+  ],
+  "context": {
+    "user_role": "guest",
+    "requires_approval": true,
+    "sensitive": true
+  }
+}

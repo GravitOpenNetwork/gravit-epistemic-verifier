@@ -1,0 +1,36 @@
+{
+  "proof_id": "proof_transfer_002",
+  "action": "transfer_funds",
+  "verification_timestamp": "2025-01-15T11:45:00Z",
+  "status": "blocked",
+  "verification_details": {
+    "semantic_compliance": {
+      "passed": false,
+      "notes": "Action 'delete_user_data' does not match declared intent 'update_profile'"
+    },
+    "policy_compliance": {
+      "passed": false,
+      "violations": ["Operation not permitted for user role 'viewer'"],
+      "rules_checked": ["rbac_policy_v2", "data_retention_law_article_17"]
+    },
+    "adversarial_risk": {
+      "risk_score": 0.87,
+      "flagged_patterns": [
+        "unusual_destination_address",
+        "impossible_travel_pattern"
+      ],
+      "passed": false
+    },
+    "reasoning_lineage": {
+      "steps_checked": 2,
+      "missing_steps": [
+        "No justification for destination change",
+        "Missing user consent confirmation"
+      ],
+      "passed": false
+    }
+  },
+  "final_decision": "blocked",
+  "confidence": 0.99,
+  "verifier_version": "v1.0.0"
+}

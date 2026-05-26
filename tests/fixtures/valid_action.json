@@ -1,0 +1,14 @@
+{
+  "action": "read_document",
+  "agent_id": "doc_reader_01",
+  "reasoning_chain": [
+    "User requested to read file 'report.pdf'",
+    "User has read permissions for this file",
+    "File exists and is not corrupted"
+  ],
+  "context": {
+    "user_role": "analyst",
+    "file_path": "/documents/report.pdf",
+    "timestamp": "2025-01-15T10:00:00Z"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "proof_id": "proof_transfer_001",
+  "action": "transfer_funds",
+  "verification_timestamp": "2025-01-15T10:30:00Z",
+  "status": "approved",
+  "verification_details": {
+    "semantic_compliance": {
+      "passed": true,
+      "notes": "Action 'transfer_funds' matches intent 'send money'"
+    },
+    "policy_compliance": {
+      "passed": true,
+      "rules_checked": [
+        "max_transfer_amount_1000",
+        "known_recipient_list",
+        "daily_limit_5000"
+      ]
+    },
+    "adversarial_risk": {
+      "risk_score": 0.12,
+      "flagged_patterns": [],
+      "passed": true
+    },
+    "reasoning_lineage": {
+      "steps_checked": 4,
+      "missing_steps": [],
+      "passed": true
+    }
+  },
+  "final_decision": "allowed",
+  "confidence": 0.96,
+  "verifier_version": "v1.0.0"
+}
