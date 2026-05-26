@@ -26,7 +26,14 @@ class SemanticONNXVerifier:
             from sentence_transformers import SentenceTransformer
 
             fallback = SentenceTransformer("all-MiniLM-L6-v2")
-            return fallback.encode([intent]), fallback.encode([action])  # temporary
+            emb1 = fallback.encode([intent])[0]
+            emb2 = fallback.encode([action])[0]
+            # cosine similarity
+            num = float(np.dot(emb1, emb2))
+            denom = float(np.linalg.norm(emb1) * np.linalg.norm(emb2)) or 1.0
+            cosine = float(num / denom)
+            return {"semantic_score": cosine, "cosine": cosine}
+
         except Exception:
             # lightweight deterministic encoding: word-hash bucket counts
             def simple_encode(s: str):
@@ -39,7 +46,12 @@ class SemanticONNXVerifier:
                 norm = np.linalg.norm(vec) or 1.0
                 return vec.reshape(1, -1) / norm
 
-            return simple_encode(intent), simple_encode(action)  # temporary
+            e1 = simple_encode(intent)[0]
+            e2 = simple_encode(action)[0]
+            num = float(np.dot(e1, e2))
+            denom = float(np.linalg.norm(e1) * np.linalg.norm(e2)) or 1.0
+            cosine = float(num / denom)
+            return {"semantic_score": cosine, "cosine": cosine}
 
         # Real ONNX implementation (placeholder):
         # inputs = self.tokenizer(

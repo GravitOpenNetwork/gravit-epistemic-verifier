@@ -2,14 +2,14 @@ import hashlib
 import uuid
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any, Dict, Optional, List
 
 try:
     from proofs.commitment import build_proof
 except Exception:
     import hashlib
 
-    def build_proof(intent: str, action: str, ees, verdict: str):
+    def build_proof(intent: str, action: str, ees: "EESMetadata", verdict: str) -> Any:
         data = {
             "intent_hash": hashlib.sha256(intent.encode()).hexdigest(),
             "action_hash": hashlib.sha256(action.encode()).hexdigest(),
@@ -90,8 +90,8 @@ class EpistemicEngine:
         intent: Any,
         action: Any,
         model_id: str = "unknown",
-        prompt: str = None,
-        intermediate_steps: list = None,
+        prompt: Optional[str] = None,
+        intermediate_steps: Optional[List[Any]] = None,
     ) -> VerificationResult:
         intent_text = self._textify(intent)
         action_text = self._textify(action)
@@ -107,7 +107,7 @@ class EpistemicEngine:
             conditions={"temperature": 0.0},
         )
 
-        semantic_result = self.semantic.score(intent_text, action_text)
+        semantic_result: Any = self.semantic.score(intent_text, action_text)
         # support legacy semantic implementations that return a numeric score
         if isinstance(semantic_result, (int, float)):
             val = float(semantic_result)
