@@ -157,6 +157,5 @@ class EpistemicEngine:
 
         return result
 
-
     # Backwards-compatible name expected by tests
     VerifierEngine = EpistemicEngine
