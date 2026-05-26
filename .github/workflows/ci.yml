@@ -2,12 +2,10 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
     paths-ignore:
       - '**.md'
       - 'docs/**'
   pull_request:
-    branches: [ main ]
   workflow_dispatch:
 
 env:
@@ -85,7 +83,7 @@ jobs:
   build-docker:
     runs-on: ubuntu-latest
     needs: test
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
 
     steps:
       - name: Checkout code
@@ -115,7 +113,7 @@ jobs:
   integration-tests:
     runs-on: ubuntu-latest
     needs: build-docker
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
 
     steps:
       - name: Checkout code
@@ -159,7 +157,6 @@ jobs:
   deploy-staging:
     runs-on: ubuntu-latest
     needs: [integration-tests, security-scan]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment:
       name: staging
       url: https://staging.gravit-network.com
