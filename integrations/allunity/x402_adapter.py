@@ -4,8 +4,10 @@ Reference adapter between Gravit Epistemic Verifier and AllUnity x402 Agentic Pa
 This is a conceptual example showing how to integrate the two systems.
 """
 
-from typing import Dict, Any
+from typing import Any, Dict
+
 import requests
+
 from gravit_verifier.engine import VerificationEngine
 
 
@@ -81,4 +83,6 @@ class X402Adapter:
     def generate_audit_proof(self, trace_id: str) -> Dict[str, Any]:
         """Retrieve full audit proof for compliance (BaFin/MiCAR)."""
         response = requests.get(f"{self.gravit_endpoint}/v1/audit/{trace_id}")
-        return response.json() if response.status_code == 200 else {"error": "not found"}
+        if response.status_code == 200:
+            return response.json()
+        return {"error": "not found"}
