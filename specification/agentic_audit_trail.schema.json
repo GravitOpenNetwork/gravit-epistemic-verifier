@@ -1,0 +1,34 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "AgenticAuditTrail",
+    "description": "Complete audit trail for regulator (BaFin/FINMA)",
+    "type": "object",
+    "properties": {
+      "trace_id": {
+        "type": "string"
+      },
+      "epistemic_commitment": {
+        "$ref": "epistemic_commitment.schema.json"
+      },
+      "truth_vector": {
+        "$ref": "truth_vector.schema.json"
+      },
+      "verification_result": {
+        "type": "object",
+        "properties": {
+          "passed": { "type": "boolean" },
+          "score": { "type": "number" },
+          "checks": { "type": "object" }
+        }
+      },
+      "settlement_proof": {
+        "type": "object",
+        "description": "Proof from AllUnity (EURAU transfer)"
+      },
+      "regulator_verification": {
+        "type": "string",
+        "description": "Hash of the entire audit trail for tamper-proofing"
+      }
+    },
+    "required": ["trace_id", "epistemic_commitment", "verification_result"]
+  }
