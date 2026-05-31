@@ -34,4 +34,4 @@ EURAU serves as the regulated settlement layer for verified agentic payments:
 ## Reference
 
 - [AllUnity Agentic Payments Announcement](https://allunity.com/news/allunity-announces-intent-to-launch-the-first-swedish-krona%E2%80%93backed-stablecoin-and-launches-agentic-payments)
-- [Peter Grosskopf on Agentic Payments Models]([https://www.linkedin.com/posts/petergrosskopf](https://www.linkedin.com/feed/update/urn:li:activity:7466079779348365312)
+- [Peter Grosskopf on Agentic Payments Models](https://www.linkedin.com/feed/update/urn:li:activity:7466079779348365312)
