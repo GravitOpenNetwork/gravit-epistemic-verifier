@@ -56,8 +56,8 @@ class X402Adapter:
             "context": payment_request.get("context", {}),
             "metadata": {
                 "amount": payment_request.get("amount"),
-                "currency": payment_request.get("currency", "EURAU")
-            }
+                "currency": payment_request.get("currency", "EURAU"),
+            },
         }
 
         # Call Gravit verifier (prefer remote, fallback to local)
@@ -65,7 +65,7 @@ class X402Adapter:
             response = requests.post(
                 f"{self.gravit_endpoint}/v1/verify",
                 json=verification_input,
-                timeout=5
+                timeout=5,
             )
             response.raise_for_status()
             result = response.json()
@@ -77,7 +77,7 @@ class X402Adapter:
             "status": "passed" if result.get("decision") == "allowed" else "failed",
             "score": result.get("score", 0.0),
             "audit_proof": result.get("trace_id", ""),
-            "checks": result.get("checks", {})
+            "checks": result.get("checks", {}),
         }
 
     def generate_audit_proof(self, trace_id: str) -> Dict[str, Any]:
