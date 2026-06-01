@@ -1,0 +1,27 @@
+name: Publish Benchmarks
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'benchmarks/results/*.json'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - name: Generate report
+      run: |
+        python benchmarks/bench_latency.py --json > benchmarks/results/latest.json
+    - name: Commit results
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add benchmarks/results/
+        git commit -m "ci: update benchmark results" || exit 0
+        git push

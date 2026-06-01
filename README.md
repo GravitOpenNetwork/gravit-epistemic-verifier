@@ -33,7 +33,7 @@ This repository is a public reference implementation of that layer.
 | Component | Description |
 |-----------|-------------|
 | `specification/` | JSON Schemas for epistemic commitments, truth vectors, audit trails |
-| `src/` | Working verifier, GRTVP consensus, audit generator (no stubs) |
+| `gravit_verifier/` | Working verifier, GRTVP consensus, audit generator (no stubs) |
 | `tests/` | Adversarial tests (sandwich, replay, intent substitution) |
 | `benchmarks/` | Latency (<50ms), gas overhead (<10%), attack success rate (0.7%) |
 | `integrations/allunity/` | How EURAU/CHFAU serve as regulated anchor for this category |
@@ -71,30 +71,25 @@ AllUnity (EURAU, CHFAU, Agentic Payments / x402) is the natural regulated anchor
 
 ---
 
-## Next Step
+## Quick Start
 
-Review the specification, run the verifier (`make test`), and examine the adversarial tests.
+```bash
+git clone https://github.com/GravitOpenNetwork/gravit-epistemic-verifier.git
+cd gravit-epistemic-verifier
+docker compose up --build
+curl -X POST http://localhost:8080/v1/verify -H "Content-Type: application/json" -d '{"agent_id": "test", "action": "transfer", "reasoning_chain": ["User authorized"]}'
+```
 
-We are open to dialogue on how AllUnity and Gravit can jointly establish this new layer for European agentic finance.
+## For Regulators (BaFin, FINMA, ESMA)
+This repository serves as a technical reference for:
+- Epistemic verification as a compliance primitive (MiCAR Art. 51, 63)
+- Agentic audit trails for AI-driven financial transactions
+- Semantic settlement verification for tokenized assets
 
----
+## Regulatory Documents
+- MiCAR Compliance Matrix
+- Regulatory Sandbox Proposal
+- Whitepaper v1.0
 
-## Integrations
-
-### AllUnity (EURAU / Agentic Payments)
-
-See [integrations/allunity/](integrations/allunity/) for a reference implementation of how Gravit can serve as the epistemic trust layer for AllUnity's x402 agentic payments.
-
-- `x402_adapter.py` – API adapter example
-- `settlement_flow.md` – Step-by-step semantic settlement flow
-- `README.md` – How EURAU/CHFAU fit into epistemic verification
-
-This integration enables:
-- Verifiable agent-to-service (A2S) micropayments
-- MiCAR-compliant audit trails for BaFin
-- Joint co-development of agentic finance standards
-
----
-
-**Gravit Open Network Foundation**  
-https://github.com/GravitOpenNetwork/gravit-epistemic-verifier
+## License
+Apache 2.0
