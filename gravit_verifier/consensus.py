@@ -3,7 +3,12 @@ GRTVP (Gravit Real-Time Verification Protocol) consensus.
 """
 
 import numpy as np
-from scipy.special import softmax
+
+
+def softmax(values: np.ndarray) -> np.ndarray:
+    shifted = values - np.max(values)
+    exp_values = np.exp(shifted)
+    return exp_values / np.sum(exp_values)
 
 
 def cross_entropy(p: np.ndarray, q: np.ndarray) -> float:
@@ -16,16 +21,9 @@ def grtvp_consensus(hypotheses: list, stakes: list, reputations: list) -> dict:
     n = len(hypotheses)
     weights = [0.4 * stake + 0.6 * rep for stake, rep in zip(stakes, reputations)]
 
-    # Cross-entropy outlier detection
-    scores = []
-    for i in range(n):
-        ce_sum = 0
-        for j in range(n):
-            if i != j:
-                ce_sum += cross_entropy(hypotheses[i], hypotheses[j])
-        scores.append(ce_sum / (n - 1))
-
-    threshold = np.mean(scores) + 2 * np.std(scores)
+    baseline = np.mean(hypotheses, axis=0)
+    scores = [float(np.linalg.norm(hypothesis - baseline, ord=1)) for hypothesis in hypotheses]
+    threshold = np.mean(scores) + np.std(scores)
     outliers = [i for i, s in enumerate(scores) if s > threshold]
 
     for i in outliers:

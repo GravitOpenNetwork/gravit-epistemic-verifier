@@ -3,7 +3,7 @@ Data models for epistemic verification.
 """
 
 from dataclasses import dataclass, field
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 
 
 @dataclass
@@ -24,9 +24,21 @@ class TruthVector:
 
 
 @dataclass
-class ValidationResult:
+class VerificationResult:
     valid: bool
     score: float
     proof: str
     latency_ms: float
+    intent_hash: str = ""
+    action_hash: str = ""
+    semantic_score: float = 0.0
+    policy_score: float = 0.0
+    adversarial_score: float = 0.0
+    verdict: str = "NEEDS_AUDIT"
+    lineage_commitment: str = ""
+    formal_proof_available: bool = False
+    audit_proof: Dict[str, Any] = field(default_factory=dict)
     details: Dict[str, Any] = field(default_factory=dict)
+
+
+ValidationResult = VerificationResult
