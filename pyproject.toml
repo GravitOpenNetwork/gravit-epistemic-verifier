@@ -1,60 +1,25 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "gravit-epistemic-verifier"
-version = "0.0.2"
-description = "Production-grade Epistemic Verification Engine for autonomous economic agents"
-readme = "README.md"
+version = "1.0.0"
+description = "Production-grade epistemic verification for AI agents"
+authors = [{name = "Gravit Open Network Foundation"}]
 license = {text = "Apache-2.0"}
-authors = [
-    {name = "Gravit Open Network", email = "info@gravit.network"}
-]
-classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: Apache Software License",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-]
-requires-python = ">=3.10"
 dependencies = [
     "fastapi>=0.100.0",
     "uvicorn>=0.23.0",
-    "z3-solver>=4.12.0",
-    "numpy>=1.24.0"
+    "pydantic>=2.0.0",
+    "numpy>=1.24.0",
+    "scipy>=1.10.0",
+    "z3-solver>=4.12.0"
 ]
 
 [project.optional-dependencies]
-dev = [
-    "pytest>=7.4.0",
-    "pytest-cov>=4.1.0",
-    "ruff>=0.1.0",
-    "black>=23.0.0",
-    "mypy>=1.5.0"
-]
-
-[project.urls]
-Homepage = "https://github.com/GravitOpenNetwork/gravit-epistemic-verifier"
-Repository = "https://github.com/GravitOpenNetwork/gravit-epistemic-verifier.git"
-
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["gravit_verifier*", "formal*"]
-
-[tool.black]
-line-length = 88
-target-version = ['py310', 'py311']
+dev = ["pytest>=7.0", "ruff>=0.1.0", "black>=23.0"]
 
 [tool.ruff]
 line-length = 88
-
-[tool.ruff.lint]
-select = ["E", "F", "W", "I"]
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-python_files = "test_*.py"
-addopts = "-v --cov=gravit_verifier"
+target-version = "py311"

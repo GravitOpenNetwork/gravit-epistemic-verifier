@@ -1,34 +1,14 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "EpistemicCommitment",
-    "description": "Verifiable proof of an AI agent's reasoning and intent",
-    "type": "object",
-    "properties": {
-      "agent_id": {
-        "type": "string",
-        "description": "Unique identifier of the AI agent"
-      },
-      "action": {
-        "type": "string",
-        "description": "Proposed action (e.g., transfer_funds, api_call)"
-      },
-      "reasoning_chain": {
-        "type": "array",
-        "items": { "type": "string" },
-        "description": "Human-readable reasoning steps"
-      },
-      "context": {
-        "type": "object",
-        "description": "Additional context (balance, user_id, policy rules)"
-      },
-      "provenance_root": {
-        "type": "string",
-        "description": "Hash of previous commitment (for lineage)"
-      },
-      "timestamp": {
-        "type": "string",
-        "format": "date-time"
-      }
-    },
-    "required": ["agent_id", "action", "reasoning_chain", "timestamp"]
-  }
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "EpistemicCommitment",
+  "type": "object",
+  "properties": {
+    "agent_id": { "type": "string" },
+    "action": { "type": "string" },
+    "reasoning_chain": { "type": "array", "items": { "type": "string" } },
+    "context": { "type": "object" },
+    "provenance_root": { "type": "string" },
+    "timestamp": { "type": "string", "format": "date-time" }
+  },
+  "required": ["agent_id", "action", "reasoning_chain"]
+}

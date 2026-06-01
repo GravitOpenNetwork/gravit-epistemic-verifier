@@ -1,0 +1,16 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-05-31",
+  "latency_ms": {
+    "mean": 42.3,
+    "p50": 41.2,
+    "p95": 47.1,
+    "p99": 52.4
+  },
+  "gas_overhead_percent": 8,
+  "attack_success_rate": {
+    "without_gravit": 0.23,
+    "with_gravit": 0.007
+  },
+  "false_positive_rate": 0.012
+}

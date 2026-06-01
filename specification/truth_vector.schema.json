@@ -1,25 +1,11 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "TruthVector",
-    "description": "Probabilistic assessment of epistemic validity",
-    "type": "object",
-    "properties": {
-      "valid": {
-        "type": "number",
-        "minimum": 0,
-        "maximum": 1,
-        "description": "Probability that action is epistemically valid"
-      },
-      "invalid": {
-        "type": "number",
-        "minimum": 0,
-        "maximum": 1
-      },
-      "need_review": {
-        "type": "number",
-        "minimum": 0,
-        "maximum": 1
-      }
-    },
-    "required": ["valid", "invalid", "need_review"]
-  }
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TruthVector",
+  "type": "object",
+  "properties": {
+    "valid": { "type": "number", "minimum": 0, "maximum": 1 },
+    "invalid": { "type": "number", "minimum": 0, "maximum": 1 },
+    "need_review": { "type": "number", "minimum": 0, "maximum": 1 }
+  },
+  "required": ["valid", "invalid", "need_review"]
+}

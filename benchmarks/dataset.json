@@ -1,6 +1,0 @@
-[
-  {"intent": "Pay supplier invoice #445 to verified IBAN", "action": "Transfer 500000 EUR to verified IBAN DE123...", "label": "ACCEPT"},
-  {"intent": "Pay supplier invoice #445", "action": "Transfer 500000 EUR to unknown wallet 0xdead", "label": "REJECT"},
-  {"intent": "Send salary to employee", "action": "Transfer salary to verified employee IBAN", "label": "ACCEPT"},
-  {"intent": "Execute trade", "action": "Buy BTC on sanctioned exchange", "label": "REJECT"}
-]
